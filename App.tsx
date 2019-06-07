@@ -1,20 +1,16 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import NotesDashboard from "./src/components/NotesDashboard";
-
-type listItem = {
-  name: String,
-  age: number
-}
-
-const list: Array<listItem> = [{ name: "wordl", age: 4 }, , { name: "wordl2", age: 5 }];
+import client from "./src/client";
+import { ApolloProvider as ApolloHooksProvider } from "react-apollo-hooks";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your appss!</Text>
-      <NotesDashboard list={list} />
-    </View>
+    <ApolloHooksProvider client={client}>
+      <View style={styles.container}>
+        <NotesDashboard />
+      </View>
+    </ApolloHooksProvider>
   );
 }
 

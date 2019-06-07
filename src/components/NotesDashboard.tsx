@@ -1,21 +1,93 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Button, Text, View, NativeSyntheticEvent } from "react-native";
+import gql from "graphql-tag";
+import { useMutation, useQuery } from "react-apollo-hooks";
 
-// const { FC } = React;
+// const GET_RESERVATIONS = gql`
+//   query {
+//     reservations {
+//       id
+//       name
+//     }
+//   }
+// `;
+
+const GET_NOTES = gql`
+  {
+    users {
+      profile {
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+const ADD_NOTES = gql`
+  mutation addUser($firstName: String!) {
+    addUser(firstName: $firstName) {
+      firstName
+      lastName
+    }
+  }
+`;
 
 type listItem = {
-    name: String,
-    age: number
-}
+  profile: {
+    firstName: String;
+    lastName: String;
+    email: String;
+  };
+};
 
-interface INotesDashboard {
-    list: Array<listItem>
-}
+const NotesWithAddButton = (props: { refetch: () => {} }) => {
+  const toggleLike = useMutation(ADD_NOTES, {
+    variables: { firstName: "123" }
+  });
+  return (
+    <View>
+      <Button
+        onPress={async () => {
+          await toggleLike();
+          props.refetch();
+        }}
+        title="Add"
+        color="#841584"
+        accessibilityLabel="Learn more about this purple button"
+      />
+    </View>
+  );
+};
 
-const NotesDashboard = (props: INotesDashboard) => {
-    return <View>{
-      props.list.map(l => <Text key={l.age}>Hello Notes Dashboard {l.name} - {l.age}</Text>)
-    }</View>
-}
+const NotesDashboard = () => {
+  const { data, error, loading, refetch } = useQuery(GET_NOTES);
+  if (loading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View>
+        <Text>Error! {error.message}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      <NotesWithAddButton refetch={refetch} />
+      {data.users.map((user: listItem, index: number) => (
+        <Text key={index}>
+          {user.profile.email} - {user.profile.lastName},
+          {user.profile.firstName}
+        </Text>
+      ))}
+    </View>
+  );
+};
 
 export default NotesDashboard;
