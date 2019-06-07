@@ -4,6 +4,8 @@ import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
 
+import { GRAPH_API_URL } from "react-native-dotenv";
+
 const client = new ApolloClient({
   link: ApolloLink.from([
     onError(({ graphQLErrors, networkError }) => {
@@ -16,8 +18,7 @@ const client = new ApolloClient({
       if (networkError) console.log(`[Network error]: ${networkError}`);
     }),
     new HttpLink({
-      uri:
-        "http://209.97.165.153:4000/graphql",
+      uri: GRAPH_API_URL,
       credentials: "same-origin"
     })
   ]),
