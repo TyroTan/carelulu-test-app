@@ -1,67 +1,51 @@
 import React from "react";
-import { Button, Text, View, NativeSyntheticEvent } from "react-native";
-import gql from "graphql-tag";
+import { Alert, Text, View } from "react-native";
 import { useMutation, useQuery } from "react-apollo-hooks";
+import styled from "styled-components";
+import NotesList from "../components/NotesList";
+import { GET_NOTES, REMOVE_NOTE } from "../client/NotesQuery";
+import { listItem } from "../components/customTypes";
 
-// const GET_RESERVATIONS = gql`
-//   query {
-//     reservations {
-//       id
-//       name
-//     }
-//   }
-// `;
-
-const GET_NOTES = gql`
-  {
-    users {
-      profile {
-        email
-        firstName
-        lastName
-      }
-    }
-  }
+const StyledList = styled(NotesList)`
+  width: 100;
+  border: 1px solid pink;
 `;
-
-const ADD_NOTES = gql`
-  mutation addUser($firstName: String!) {
-    addUser(firstName: $firstName) {
-      firstName
-      lastName
-    }
-  }
-`;
-
-type listItem = {
-  profile: {
-    firstName: String;
-    lastName: String;
-    email: String;
-  };
-};
-
-const NotesWithAddButton = (props: { refetch: () => {} }) => {
-  const toggleLike = useMutation(ADD_NOTES, {
-    variables: { firstName: "123" }
-  });
-  return (
-    <View>
-      <Button
-        onPress={async () => {
-          await toggleLike();
-          props.refetch();
-        }}
-        title="Add"
-        color="#841584"
-        accessibilityLabel="Learn more about this purple button"
-      />
-    </View>
-  );
-};
 
 const NotesDashboard = () => {
   const { data, error, loading, refetch } = useQuery(GET_NOTES);
+  const removeNoteMutation = useMutation(REMOVE_NOTE);
+  const notesList: listItem[] = data.notes;
+
+  const onDeleteAlert: (id: String) => void = (id: String) => {
+    Alert.alert(
+      "Are you sure?",
+      "",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              await removeNoteMutation({
+                variables: { id }
+              });
+              
+              refetch();
+            } catch (e) {
+
+              // TODO: handle "something went wrong".
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   if (loading) {
     return (
       <View>
@@ -77,17 +61,7 @@ const NotesDashboard = () => {
     );
   }
 
-  return (
-    <View>
-      <NotesWithAddButton refetch={refetch} />
-      {data.users.map((user: listItem, index: number) => (
-        <Text key={index}>
-          {user.profile.email} - {user.profile.lastName},
-          {user.profile.firstName}
-        </Text>
-      ))}
-    </View>
-  );
+  return <StyledList list={notesList} onDelete={onDeleteAlert} />;
 };
 
 export default NotesDashboard;

@@ -17,7 +17,6 @@ const client = new ApolloClient({
     }),
     new HttpLink({
       uri:
-        // "https://us1.prisma.sh/public-luckox-377/reservation-graphql-backend/dev",
         "http://localhost:4000/graphql",
       credentials: "same-origin"
     })
