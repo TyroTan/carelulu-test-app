@@ -1,5 +1,5 @@
 export type listItem = {
-  _id: String;
+  id: String;
   note: String;
   createdAt: String;
 };

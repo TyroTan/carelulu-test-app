@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 const GET_NOTES = gql`
   {
     notes {
-      _id
+      id
       note
       createdAt
     }
@@ -13,7 +13,7 @@ const GET_NOTES = gql`
 const ADD_NOTE = gql`
   mutation addNote($note: String!) {
     addNote(note: $note) {
-      _id
+      id
       note
       createdAt
     }

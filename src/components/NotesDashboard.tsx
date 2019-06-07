@@ -6,10 +6,7 @@ import NotesList from "../components/NotesList";
 import { GET_NOTES, REMOVE_NOTE } from "../client/NotesQuery";
 import { listItem } from "../components/customTypes";
 
-const StyledList = styled(NotesList)`
-  width: 100;
-  border: 1px solid pink;
-`;
+const StyledList = styled(NotesList)``;
 
 const NotesDashboard = () => {
   const { data, error, loading, refetch } = useQuery(GET_NOTES);
@@ -33,10 +30,9 @@ const NotesDashboard = () => {
               await removeNoteMutation({
                 variables: { id }
               });
-              
+
               refetch();
             } catch (e) {
-
               // TODO: handle "something went wrong".
             }
           }
@@ -61,7 +57,14 @@ const NotesDashboard = () => {
     );
   }
 
-  return <StyledList list={notesList} onDelete={onDeleteAlert} />;
+  return (
+    <StyledList
+      list={notesList}
+      onDelete={onDeleteAlert}
+      refreshing={loading}
+      refetch={refetch}
+    />
+  );
 };
 
 export default NotesDashboard;

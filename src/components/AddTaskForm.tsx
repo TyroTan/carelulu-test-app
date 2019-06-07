@@ -17,6 +17,13 @@ const AddTaskForm = (props: {
   const addNoteMutation = useMutation(ADD_NOTE, {
     variables: { note: name }
   });
+
+  const didBlur = () => {
+    const el: { blur: () => {} } = inputRef && inputRef.current!;
+    setName("");
+    el.blur();
+  }
+
   useNavigationEvents(() => {
     const el: { focus: () => {} } = inputRef && inputRef.current!;
     setName("");
@@ -34,6 +41,7 @@ const AddTaskForm = (props: {
         ref={inputRef}
         style={styles.input}
         onChangeText={text => setName(text)}
+        onBlur={didBlur}
         value={name}
         placeholder="Enter Notes here"
       />

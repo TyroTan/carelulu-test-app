@@ -29,10 +29,14 @@ const StyledTrashIcon = styled(Icon).attrs({
 
 const NotesList = ({
   list,
-  onDelete
+  onDelete,
+  refetch,
+  refreshing,
 }: {
   list: listItem[];
   onDelete: (id: String) => void;
+  refetch: () => void;
+  refreshing: boolean;
 }) => {
   const keyExtractor = (item: listItem, index: number) => index.toString();
   if (!list || !list.length) {
@@ -51,7 +55,7 @@ const NotesList = ({
         title={item.note + ""}
         subtitle={`${dateObj.format("YYYY-MM-DD HH:mm")}\n${dateObj.fromNow()}`}
         rightElement={
-          <TouchableOpacity onPress={() => onDelete(item._id)}>
+          <TouchableOpacity onPress={() => onDelete(item.id)}>
             <StyledTrashIcon color="red" />
           </TouchableOpacity>
         }
@@ -61,6 +65,8 @@ const NotesList = ({
 
   return (
     <FlatList
+      onRefresh={refetch}
+      refreshing={refreshing}
       keyExtractor={keyExtractor}
       data={list ? list : []}
       renderItem={renderItem}
